@@ -28,6 +28,10 @@ export interface User {
   bio: string;
 }
 
+export interface GetRequest {
+  id: number;
+}
+
 function createBaseCreateRequest(): CreateRequest {
   return { email: "", password: "" };
 }
@@ -278,6 +282,63 @@ export const User = {
   },
 };
 
+function createBaseGetRequest(): GetRequest {
+  return { id: 0 };
+}
+
+export const GetRequest = {
+  encode(message: GetRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).int64(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.id = longToNumber(reader.int64() as Long);
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetRequest {
+    return { id: isSet(object.id) ? globalThis.Number(object.id) : 0 };
+  },
+
+  toJSON(message: GetRequest): unknown {
+    const obj: any = {};
+    if (message.id !== 0) {
+      obj.id = Math.round(message.id);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<GetRequest>): GetRequest {
+    return GetRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<GetRequest>): GetRequest {
+    const message = createBaseGetRequest();
+    message.id = object.id ?? 0;
+    return message;
+  },
+};
+
 export type UsersDefinition = typeof UsersDefinition;
 export const UsersDefinition = {
   name: "Users",
@@ -299,17 +360,27 @@ export const UsersDefinition = {
       responseStream: false,
       options: {},
     },
+    get: {
+      name: "Get",
+      requestType: GetRequest,
+      requestStream: false,
+      responseType: User,
+      responseStream: false,
+      options: {},
+    },
   },
 } as const;
 
 export interface UsersServiceImplementation<CallContextExt = {}> {
   getMe(request: AuthorizationRequest, context: CallContext & CallContextExt): Promise<DeepPartial<User>>;
   create(request: CreateRequest, context: CallContext & CallContextExt): Promise<DeepPartial<User>>;
+  get(request: GetRequest, context: CallContext & CallContextExt): Promise<DeepPartial<User>>;
 }
 
 export interface UsersClient<CallOptionsExt = {}> {
   getMe(request: DeepPartial<AuthorizationRequest>, options?: CallOptions & CallOptionsExt): Promise<User>;
   create(request: DeepPartial<CreateRequest>, options?: CallOptions & CallOptionsExt): Promise<User>;
+  get(request: DeepPartial<GetRequest>, options?: CallOptions & CallOptionsExt): Promise<User>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;

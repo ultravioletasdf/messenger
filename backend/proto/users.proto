@@ -7,6 +7,7 @@ option go_package="./pb";
 service Users {
     rpc GetMe(AuthorizationRequest) returns (User);
     rpc Create(CreateRequest) returns (User);
+    rpc Get(GetRequest) returns (User);
 }
 
 message CreateRequest {
@@ -23,4 +24,7 @@ message User {
     string username = 3;
     string display_name = 4;
     string bio = 5;
+}
+message GetRequest {
+    int64 id = 1;
 }

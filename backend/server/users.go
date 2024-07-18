@@ -34,6 +34,11 @@ func (*usersServer) Create(ctx context.Context, in *pb.CreateRequest) (*pb.User,
 		return nil, status.Error(codes.InvalidArgument, "Invalid email: "+err.Error())
 	}
 
+	// check if password is valid
+	if between := isBetween(len(in.Password), 8, 32); !between {
+		return nil, status.Error(codes.InvalidArgument, "Password must be between 8 and 32 characters")
+	}
+
 	// check if email is taken
 	email, err := executor.CheckEmail(ctx, in.Email)
 	if err != sql.ErrNoRows && err != nil {
@@ -72,4 +77,14 @@ func (*usersServer) Create(ctx context.Context, in *pb.CreateRequest) (*pb.User,
 		return nil, status.Error(codes.Internal, "Failed to create user: "+err.Error())
 	}
 	return &pb.User{Id: id, Email: in.Email, Username: usernameModified, DisplayName: usernameModified, Bio: "This user hasn't set a bio"}, nil
+}
+func (*usersServer) Get(ctx context.Context, in *pb.GetRequest) (*pb.User, error) {
+	user, err := executor.GetUser(ctx, in.Id)
+	if err == sql.ErrNoRows && err != nil {
+		return nil, status.Error(codes.NotFound, "User Not Found")
+	}
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Something went wrong: "+err.Error())
+	}
+	return &pb.User{Id: user.ID, Email: user.Email, Username: user.Username, DisplayName: user.DisplayName.String, Bio: user.Bio.String}, nil
 }
