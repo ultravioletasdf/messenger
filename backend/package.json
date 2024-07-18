@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "long": "^5.2.3",
+    "protobufjs": "^7.3.2"
+  },
+  "devDependencies": {
+    "grpc-tools": "^1.12.4",
+    "ts-proto": "^1.181.1"
+  }
+}

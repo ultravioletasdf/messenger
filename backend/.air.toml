@@ -4,8 +4,8 @@ tmp_dir = "tmp"
 [build]
   args_bin = []
   bin = "./tmp/backend"
-  cmd = "make generate && go build -o ./tmp/backend server/*"
+  cmd = "make generate && sqlc generate && go build -o ./tmp/backend server/*"
   delay = 1000
   exclude_dir = ["tmp", "pb", "db"]
   exclude_regex = ["_test.go"]
-  include_ext = ["go", "proto"]
+  include_ext = ["go", "proto", "sql"]

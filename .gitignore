@@ -1,6 +1,9 @@
 backend/pb
 backend/db
 backend/tmp
+node_modules
+
+*.js
 
 dev.db
 .env

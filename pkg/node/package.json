@@ -1,0 +1,12 @@
+{
+  "main": "mod.ts",
+  "dependencies": {
+    "long": "^5.2.3",
+    "nice-grpc": "^2.1.9",
+    "protobufjs": "^7.3.2"
+  },
+  "devDependencies": {
+    "grpc-tools": "^1.12.4",
+    "ts-proto": "^1.181.1"
+  }
+}

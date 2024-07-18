@@ -19,7 +19,8 @@ message AuthorizationRequest {
 }
 message User {
     int64 id = 1;
-    string username = 2;
-    string display_name = 3;
-    string bio = 4;
+    string email = 2;
+    string username = 3;
+    string display_name = 4;
+    string bio = 5;
 }
