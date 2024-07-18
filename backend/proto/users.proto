@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package users;
+
+option go_package="./pb";
+
+service Users {
+    rpc GetMe(AuthorizationRequest) returns (User);
+    rpc Create(CreateRequest) returns (User);
+}
+
+message CreateRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message AuthorizationRequest {
+    string token = 1;
+}
+message User {
+    int64 id = 1;
+    string username = 2;
+    string display_name = 3;
+    string bio = 4;
+}

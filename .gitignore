@@ -1,0 +1,6 @@
+backend/pb
+backend/db
+backend/tmp
+
+dev.db
+.env
