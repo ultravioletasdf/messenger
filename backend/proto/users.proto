@@ -7,6 +7,7 @@ option go_package="./pb";
 service Users {
     rpc GetMe(AuthorizationRequest) returns (User);
     rpc Create(CreateRequest) returns (User);
+    rpc SignIn(SignInRequest) returns (Session);
     rpc Get(GetRequest) returns (User);
 }
 
@@ -27,4 +28,12 @@ message User {
 }
 message GetRequest {
     int64 id = 1;
+}
+message SignInRequest {
+    string email = 1;
+    string password = 2;
+    string platform = 3;
+}
+message Session {
+    string token = 1;
 }

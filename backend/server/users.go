@@ -13,6 +13,7 @@ import (
 
 	"github.com/badoux/checkmail"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/status"
 )
 
@@ -40,11 +41,11 @@ func (*usersServer) Create(ctx context.Context, in *pb.CreateRequest) (*pb.User,
 	}
 
 	// check if email is taken
-	email, err := executor.CheckEmail(ctx, in.Email)
+	email, err := executor.GetFromEmail(ctx, in.Email)
 	if err != sql.ErrNoRows && err != nil {
 		return nil, status.Error(codes.Internal, "Couldn't check email: "+err.Error())
 	}
-	if email != 0 {
+	if email.ID != 0 {
 		return nil, status.Error(codes.AlreadyExists, "Email is already being used")
 	}
 
@@ -87,4 +88,27 @@ func (*usersServer) Get(ctx context.Context, in *pb.GetRequest) (*pb.User, error
 		return nil, status.Error(codes.Internal, "Something went wrong: "+err.Error())
 	}
 	return &pb.User{Id: user.ID, Email: user.Email, Username: user.Username, DisplayName: user.DisplayName.String, Bio: user.Bio.String}, nil
+}
+func (*usersServer) SignIn(ctx context.Context, in *pb.SignInRequest) (*pb.Session, error) {
+	token := generateToken(32)
+	p, _ := peer.FromContext(ctx)
+	ip := p.Addr.String()
+	user, err := executor.GetFromEmail(ctx, in.Email)
+	if err == sql.ErrNoRows && err != nil {
+		return nil, status.Error(codes.NotFound, "No user has that email")
+	}
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Something went wrong: "+err.Error())
+	}
+	// Check if hash is valid
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(in.Password))
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, "Incorrect Password")
+	}
+
+	err = executor.CreateSession(ctx, db.CreateSessionParams{Token: token, UserID: user.ID, Platform: in.Platform, Ip: ip})
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Something went wrong: "+err.Error())
+	}
+	return &pb.Session{Token: token}, nil
 }

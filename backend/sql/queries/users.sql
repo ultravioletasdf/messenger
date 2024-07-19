@@ -6,8 +6,8 @@ WHERE id = ?;
 SELECT id FROM users
 WHERE username = ?;
 
--- name: CheckEmail :one
-SELECT id FROM users
+-- name: GetFromEmail :one
+SELECT * FROM users
 WHERE email = ?;
 
 -- name: CreateUser :exec
