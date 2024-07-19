@@ -22,11 +22,15 @@ type usersServer struct {
 }
 
 func (*usersServer) GetMe(ctx context.Context, in *pb.AuthorizationRequest) (*pb.User, error) {
-	if in.Token == "abc" {
-		return &pb.User{Id: 12345, Username: "myuser", DisplayName: "My Displa Name", Bio: "this is a bio"}, nil
+	user, err := executor.GetFromSession(ctx, in.Token)
+	if err == sql.ErrNoRows {
+		return nil, status.Error(codes.NotFound, "User not found")
+	}
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Something went wrong: "+err.Error())
 	}
 
-	return nil, status.Error(codes.NotFound, "User Not Found")
+	return &pb.User{Id: user.ID, Email: user.Email, Username: user.Username, DisplayName: user.DisplayName.String, Bio: user.Bio.String}, nil
 }
 
 func (*usersServer) Create(ctx context.Context, in *pb.CreateRequest) (*pb.User, error) {

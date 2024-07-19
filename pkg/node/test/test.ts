@@ -4,7 +4,7 @@ const client = new Client();
 (async function () {
   try {
     console.log(
-      await client.users.create({ email: "abc@ga.com", password: "abc" })
+      await client.users.create({ email: "abc@ga.com", password: "12345678" })
     );
   } catch (error) {
     console.log(error);
@@ -32,7 +32,17 @@ const client = new Client();
     console.log(error);
   }
   try {
+    console.log(await client.users.getMe({ token }));
+  } catch (error) {
+    console.log(error);
+  }
+  try {
     console.log(await client.users.signOut({ token }));
+  } catch (error) {
+    console.log(error);
+  }
+  try {
+    console.log(await client.users.getMe({ token }));
   } catch (error) {
     console.log(error);
   }
