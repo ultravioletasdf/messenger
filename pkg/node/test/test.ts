@@ -20,4 +20,11 @@ const client = new Client();
   } catch (error) {
     console.log(error);
   }
+  try {
+    console.log(
+      await client.users.signIn({ email: "abc@ga.com", password: "abc" })
+    );
+  } catch (error) {
+    console.log(error);
+  }
 })();

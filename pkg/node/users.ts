@@ -32,6 +32,16 @@ export interface GetRequest {
   id: number;
 }
 
+export interface SignInRequest {
+  email: string;
+  password: string;
+  platform: string;
+}
+
+export interface Session {
+  token: string;
+}
+
 function createBaseCreateRequest(): CreateRequest {
   return { email: "", password: "" };
 }
@@ -339,6 +349,152 @@ export const GetRequest = {
   },
 };
 
+function createBaseSignInRequest(): SignInRequest {
+  return { email: "", password: "", platform: "" };
+}
+
+export const SignInRequest = {
+  encode(message: SignInRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.email !== "") {
+      writer.uint32(10).string(message.email);
+    }
+    if (message.password !== "") {
+      writer.uint32(18).string(message.password);
+    }
+    if (message.platform !== "") {
+      writer.uint32(26).string(message.platform);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): SignInRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSignInRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.email = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.password = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.platform = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SignInRequest {
+    return {
+      email: isSet(object.email) ? globalThis.String(object.email) : "",
+      password: isSet(object.password) ? globalThis.String(object.password) : "",
+      platform: isSet(object.platform) ? globalThis.String(object.platform) : "",
+    };
+  },
+
+  toJSON(message: SignInRequest): unknown {
+    const obj: any = {};
+    if (message.email !== "") {
+      obj.email = message.email;
+    }
+    if (message.password !== "") {
+      obj.password = message.password;
+    }
+    if (message.platform !== "") {
+      obj.platform = message.platform;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<SignInRequest>): SignInRequest {
+    return SignInRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<SignInRequest>): SignInRequest {
+    const message = createBaseSignInRequest();
+    message.email = object.email ?? "";
+    message.password = object.password ?? "";
+    message.platform = object.platform ?? "";
+    return message;
+  },
+};
+
+function createBaseSession(): Session {
+  return { token: "" };
+}
+
+export const Session = {
+  encode(message: Session, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.token !== "") {
+      writer.uint32(10).string(message.token);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Session {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSession();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.token = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Session {
+    return { token: isSet(object.token) ? globalThis.String(object.token) : "" };
+  },
+
+  toJSON(message: Session): unknown {
+    const obj: any = {};
+    if (message.token !== "") {
+      obj.token = message.token;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<Session>): Session {
+    return Session.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<Session>): Session {
+    const message = createBaseSession();
+    message.token = object.token ?? "";
+    return message;
+  },
+};
+
 export type UsersDefinition = typeof UsersDefinition;
 export const UsersDefinition = {
   name: "Users",
@@ -360,6 +516,14 @@ export const UsersDefinition = {
       responseStream: false,
       options: {},
     },
+    signIn: {
+      name: "SignIn",
+      requestType: SignInRequest,
+      requestStream: false,
+      responseType: Session,
+      responseStream: false,
+      options: {},
+    },
     get: {
       name: "Get",
       requestType: GetRequest,
@@ -374,12 +538,14 @@ export const UsersDefinition = {
 export interface UsersServiceImplementation<CallContextExt = {}> {
   getMe(request: AuthorizationRequest, context: CallContext & CallContextExt): Promise<DeepPartial<User>>;
   create(request: CreateRequest, context: CallContext & CallContextExt): Promise<DeepPartial<User>>;
+  signIn(request: SignInRequest, context: CallContext & CallContextExt): Promise<DeepPartial<Session>>;
   get(request: GetRequest, context: CallContext & CallContextExt): Promise<DeepPartial<User>>;
 }
 
 export interface UsersClient<CallOptionsExt = {}> {
   getMe(request: DeepPartial<AuthorizationRequest>, options?: CallOptions & CallOptionsExt): Promise<User>;
   create(request: DeepPartial<CreateRequest>, options?: CallOptions & CallOptionsExt): Promise<User>;
+  signIn(request: DeepPartial<SignInRequest>, options?: CallOptions & CallOptionsExt): Promise<Session>;
   get(request: DeepPartial<GetRequest>, options?: CallOptions & CallOptionsExt): Promise<User>;
 }
 
