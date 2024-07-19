@@ -20,10 +20,19 @@ const client = new Client();
   } catch (error) {
     console.log(error);
   }
+  let token = "";
   try {
-    console.log(
-      await client.users.signIn({ email: "abc@ga.com", password: "abc" })
-    );
+    const res = await client.users.signIn({
+      email: "abc@ga.com",
+      password: "abc",
+    });
+    token = res.token;
+    console.log(res);
+  } catch (error) {
+    console.log(error);
+  }
+  try {
+    console.log(await client.users.signOut({ token }));
   } catch (error) {
     console.log(error);
   }

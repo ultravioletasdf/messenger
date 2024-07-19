@@ -42,6 +42,9 @@ export interface Session {
   token: string;
 }
 
+export interface Empty {
+}
+
 function createBaseCreateRequest(): CreateRequest {
   return { email: "", password: "" };
 }
@@ -495,6 +498,49 @@ export const Session = {
   },
 };
 
+function createBaseEmpty(): Empty {
+  return {};
+}
+
+export const Empty = {
+  encode(_: Empty, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Empty {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseEmpty();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(_: any): Empty {
+    return {};
+  },
+
+  toJSON(_: Empty): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  create(base?: DeepPartial<Empty>): Empty {
+    return Empty.fromPartial(base ?? {});
+  },
+  fromPartial(_: DeepPartial<Empty>): Empty {
+    const message = createBaseEmpty();
+    return message;
+  },
+};
+
 export type UsersDefinition = typeof UsersDefinition;
 export const UsersDefinition = {
   name: "Users",
@@ -524,6 +570,14 @@ export const UsersDefinition = {
       responseStream: false,
       options: {},
     },
+    signOut: {
+      name: "SignOut",
+      requestType: AuthorizationRequest,
+      requestStream: false,
+      responseType: Empty,
+      responseStream: false,
+      options: {},
+    },
     get: {
       name: "Get",
       requestType: GetRequest,
@@ -539,6 +593,7 @@ export interface UsersServiceImplementation<CallContextExt = {}> {
   getMe(request: AuthorizationRequest, context: CallContext & CallContextExt): Promise<DeepPartial<User>>;
   create(request: CreateRequest, context: CallContext & CallContextExt): Promise<DeepPartial<User>>;
   signIn(request: SignInRequest, context: CallContext & CallContextExt): Promise<DeepPartial<Session>>;
+  signOut(request: AuthorizationRequest, context: CallContext & CallContextExt): Promise<DeepPartial<Empty>>;
   get(request: GetRequest, context: CallContext & CallContextExt): Promise<DeepPartial<User>>;
 }
 
@@ -546,6 +601,7 @@ export interface UsersClient<CallOptionsExt = {}> {
   getMe(request: DeepPartial<AuthorizationRequest>, options?: CallOptions & CallOptionsExt): Promise<User>;
   create(request: DeepPartial<CreateRequest>, options?: CallOptions & CallOptionsExt): Promise<User>;
   signIn(request: DeepPartial<SignInRequest>, options?: CallOptions & CallOptionsExt): Promise<Session>;
+  signOut(request: DeepPartial<AuthorizationRequest>, options?: CallOptions & CallOptionsExt): Promise<Empty>;
   get(request: DeepPartial<GetRequest>, options?: CallOptions & CallOptionsExt): Promise<User>;
 }
 

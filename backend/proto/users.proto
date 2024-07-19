@@ -8,6 +8,7 @@ service Users {
     rpc GetMe(AuthorizationRequest) returns (User);
     rpc Create(CreateRequest) returns (User);
     rpc SignIn(SignInRequest) returns (Session);
+    rpc SignOut(AuthorizationRequest) returns (Empty);
     rpc Get(GetRequest) returns (User);
 }
 
@@ -37,3 +38,4 @@ message SignInRequest {
 message Session {
     string token = 1;
 }
+message Empty {}

@@ -5,3 +5,7 @@ VALUES ( ?, ?, ?, ?, unixepoch('now'));
 -- name: GetSession :one
 SELECT * FROM sessions
 WHERE token = ?;
+
+-- name: DeleteSession :exec
+DELETE FROM sessions
+WHERE token = ?;

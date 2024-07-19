@@ -112,3 +112,10 @@ func (*usersServer) SignIn(ctx context.Context, in *pb.SignInRequest) (*pb.Sessi
 	}
 	return &pb.Session{Token: token}, nil
 }
+func (*usersServer) SignOut(ctx context.Context, in *pb.AuthorizationRequest) (*pb.Empty, error) {
+	err := executor.DeleteSession(ctx, in.Token)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	return &pb.Empty{}, nil
+}
